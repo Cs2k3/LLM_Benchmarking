@@ -1,0 +1,8 @@
+
+models:
+  - name: LLaMA 3 8B
+    repo_id: meta-llama/Llama-3-8B-Instruct
+  - name: Qwen 2.5 2B
+    repo_id: Qwen/Qwen-2B-Instruct
+  - name: Gemma 2B
+    repo_id: google/gemma-2b-it
