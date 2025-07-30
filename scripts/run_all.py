@@ -4,7 +4,7 @@ import csv
 import os
 import time
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from scripts.utils import measure_memory, measure_latency_and_tpm
+from utils import measure_memory, measure_latency_and_tpm
 
 def load_models_from_yaml(path):
     with open(path, "r") as file:

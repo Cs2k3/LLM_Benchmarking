@@ -1,59 +1,57 @@
-# 🧪 LLM Benchmarking Tool
+# LLM Benchmarking Tool
 
-This project benchmarks the performance of open-source LLMs (like LLaMA 3.1 8B, Qwen 2.5, and Gemma 2B) on local hardware.
+## 📌 Project Overview
 
-## 📌 Features
-- Benchmark LLMs for latency, memory usage, and tokens-per-minute (TPM)
-- Lightweight benchmarking script for local environments
-- YAML-based config system for easy model switching
-- Results logging (coming soon)
+This project is a **Local LLM Benchmarking Tool** built as part of a machine learning technical assignment. It benchmarks various open-source language models to evaluate their feasibility on a local machine by measuring:
 
-## 📂 Folder Structure
-```
+- ⏱ Latency (seconds per prompt)
+- 📈 TPM (Tokens Per Minute)
+- 💾 Memory usage
+
+## 🎯 Objective
+
+> To determine whether running a local model is beneficial by benchmarking models like **LLaMA 3.1 8B**, **Qwen 2.5**, and **Gemma 2B**, or their alternatives.
+
+Due to system constraints and gated access on Hugging Face, equivalent models such as `DistilGPT2`, `GPT2`, and `Falcon 1B` were tested instead.
+
+## ✅ Benchmark Results
+
+| Model       | Latency (s) | TPM     | Memory (MB) |
+|-------------|-------------|---------|-------------|
+| DistilGPT2  | 2.49        | 1443.11 | 486.84      |
+| GPT2        | 3.92        | 918.00  | 674.10      |
+| Falcon 1B   | 212.95      | 16.91   | 3941.64     |
+
+## 🧪 How to Run
+
+1. Clone this repo  
+2. Create virtual environment:
+    ```bash
+    python -m venv venv
+    venv\\Scripts\\activate
+    pip install -r requirements.txt
+    ```
+3. Run the benchmark:
+    ```bash
+    python scripts/run_all.py
+    ```
+
+## 📎 Notes
+
+- `LLaMA 3.1 8B`, `Qwen 2.5`, and `Gemma 2B` were inaccessible due to Hugging Face gated restrictions and memory limitations.
+- `scripts/run_all.py` is designed to be extensible for more models.
+- Results could be stored in a `.csv` or visualized in future upgrades.
+
+## 📁 Repository Structure
 LLM_Benchmarking/
-├── configs/         # YAML config files
-├── models/          # Pre-downloaded models (not versioned)
-├── results/         # Benchmark logs/output
-├── scripts/         # Python benchmark logic
-├── requirements.txt # Dependency list
-└── README.md
-```
+├── scripts/
+│ ├── run_all.py
+│ ├── utils.py
+├── requirements.txt
+├── README.md
+└── results.csv 
 
-## 🚀 Setup Instructions
+## 👨‍💻 Author
 
-### 1. Create Virtual Environment (optional but recommended)
-```bash
-python -m venv venv
-venv\Scripts\activate    # Windows
-source venv/bin/activate   # Mac/Linux
-```
-
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Run Benchmark
-```bash
-cd scripts
-python run_all.py
-```
-
-## 🧹 Important: Exclude Large Files
-
-This repo **does not** track:
-- `venv/`
-- `.pyc`, `.pkl`, `.log`
-- Model binaries
-
-> Make sure your `.gitignore` file includes these to avoid GitHub push issues.
-
-## 🧠 Models in Use
-```yaml
-- meta-llama/Llama-3-8B-Instruct
-- Qwen/Qwen-2B-Instruct
-- google/gemma-2b-it
-```
-
-## 📜 License
-MIT License © 2025
+- GitHub: [https://github.com/Cs2k3](https://github.com/Cs2k3)
+- Last updated: 2025-07-30
