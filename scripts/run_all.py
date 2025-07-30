@@ -1,43 +1,50 @@
-
+import subprocess
+import time
 import yaml
 import csv
 import os
-import time
-from transformers import AutoTokenizer, AutoModelForCausalLM
-from utils import measure_memory, measure_latency_and_tpm
 
 def load_models_from_yaml(path):
     with open(path, "r") as file:
-        return yaml.safe_load(file)["models"]
+        data = yaml.safe_load(file)
+    return data["models"]
 
-def benchmark_model(name, repo_id):
-    tokenizer = AutoTokenizer.from_pretrained(repo_id)
-    model = AutoModelForCausalLM.from_pretrained(repo_id)
-    prompt = "Explain the benefits of using local LLMs."
+def benchmark_model(model_name, prompt):
+    start_time = time.time()
 
-    latency, tpm = measure_latency_and_tpm(model, tokenizer, prompt)
-    memory = measure_memory()
-    return latency, tpm, memory
+    try:
+        result = subprocess.run(
+    ["ollama", "run", model_name, prompt],
+    capture_output=True,
+    text=True,
+    encoding="utf-8",         # <--- Fix: force UTF-8
+    errors="replace",         # <--- Replace any unreadable chars
+    timeout=300
+)
 
-def save_results(name, latency, tpm, memory):
-    file_path = "results/benchmark_results.csv"
-    header = ["Model", "Latency (s)", "TPM", "Memory (MB)"]
-    write_header = not os.path.exists(file_path)
-    with open(file_path, mode="a", newline="") as file:
+        latency = time.time() - start_time
+        output = result.stdout
+        tpm = len(output.split()) / (latency / 60) if latency > 0 else 0
+        return round(latency, 2), round(tpm, 2), "Success"
+
+    except Exception as e:
+        return 0, 0, f"Failed: {str(e)}"
+
+def main():
+    models = load_models_from_yaml("../configs/models.yaml")
+
+    os.makedirs("../results", exist_ok=True)
+    results_path = "../results/benchmark_results.csv"
+
+    with open(results_path, "w", newline="") as file:
         writer = csv.writer(file)
-        if write_header:
-            writer.writerow(header)
-        writer.writerow([name, round(latency, 2), round(tpm, 2), memory])
+        writer.writerow(["Model", "Latency (s)", "TPM", "Status"])
+
+        for model in models:
+            print(f"\n[INFO] Benchmarking {model['label']}")
+            latency, tpm, status = benchmark_model(model["name"], model["prompt"])
+            print(f"[RESULT] Latency: {latency}s, TPM: {tpm}, Status: {status}")
+            writer.writerow([model["label"], latency, tpm, status])
 
 if __name__ == "__main__":
-    models = load_models_from_yaml("configs/models.yaml")
-    for model_info in models:
-        name = model_info["name"]
-        repo_id = model_info["repo_id"]
-        print(f"\n[INFO] Benchmarking {name}")
-        try:
-            latency, tpm, memory = benchmark_model(name, repo_id)
-            save_results(name, latency, tpm, memory)
-            print(f"[RESULT] Latency: {latency:.2f}s, TPM: {tpm:.2f}, Memory: {memory}MB")
-        except Exception as e:
-            print(f"[ERROR] Failed to benchmark {name}: {e}")
+    main()

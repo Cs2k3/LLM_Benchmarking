@@ -1,0 +1,4 @@
+Model,Latency (s),TPM,Status
+LLaMA 3 8B,30.91,11.65,Success
+Qwen 1.5B,1.97,0.0,Success
+Gemma 2B,110.83,8.66,Success
